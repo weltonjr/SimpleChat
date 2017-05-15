@@ -6,33 +6,57 @@
     <link rel="stylesheet" href="/assets/bootstrap.css">
 </head>
 
-<body>
-    <div class="content">
+<body ng-app="Chat">
+    <div class="content" ng-controller="chatController">
         <div class="row justify-content-md-center">
             <div class="col col-md-3">
                 <h1>WebChat</h1>
                 <hr>
-                <div>
-                     <ul>
-                         <li>Teste</li>
-                     </ul>
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-action flex-column align-items-start active" ng-repeat="message in messages">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small>Nome de usuario</small>
+                            <small>data</small>
+                        </div>
+                        <p class="mb-1">{{message.text}}}</p>
+                    </div>
                 </div>
-                <form onsubmit="formCallback">
+                <hr>
+                <form ng-submit="click()">
                     <div class="input-group input-group-lg">
-                        <input type="text" class="form-control" id="nome" name="Nome" placeholder="Nome" required>
+                        <input type="text" class="form-control" id="nome" name="Nome" placeholder="Digite algo..." required ng-model="Message">
                         <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary">Entrar</button>
+                            <button type="submit" class="btn btn-primary" >Entrar</button>
                         </span>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
+    <script src="/assets/angular.js"></script>
     <script>
-        function formCalback(e){
-            e.preventDefault()
-        }
+        let myApp = angular.module('Chat', [])
+
+        myApp.controller('chatController', function ($scope, $http) {
+
+            let connection = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws`)
+
+            connection.onopen = function (e){
+                
+            }
+            connection.onmessage = function (e) {
+                console.log(e.data)
+            };
+
+            connection.onclose = function(e){
+                $scope.status = false
+                connection = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws`)
+            }
+            
+            $scope.click = function () {
+                connection.send($scope.Message)
+            }
+        });
     </script>
 </body>
 

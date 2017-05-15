@@ -2,14 +2,12 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
+Users = []
+
 class Home(tornado.web.RequestHandler):
     def get(self):
         with open('index.html', encoding="utf-8") as file:
             self.write(file.read())
-
-class StaticFileHandler(tornado.web.StaticFileHandler):
-    def set_extra_headers(self, path):
-        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
 
 class ChatPage(tornado.web.RequestHandler):
     def get(self):
@@ -18,26 +16,36 @@ class ChatPage(tornado.web.RequestHandler):
         with open('chat.html', encoding="utf-8") as file:
             self.write(file.read())
 
+class ChatSend(tornado.web.RequestHandler):
+    def post(self):
+        for user in Users:
+            user.write_message("self.request.body")
+
 class Chat(tornado.websocket.WebSocketHandler):
     def open(self):
-        print("WebSocket opened")
+        print('open')
+        Users.append(self)
 
     def on_message(self, message):
-        self.write_message(u"You said: " + message)
+        print(message)
+        for item in Users:
+            item.write_message("message")
 
     def on_close(self):
-        print("WebSocket closed")
+        print('closed')
+        Users.remove(self)
 
     def check_origin(self, origin):
         return True
 
+if __name__ == "__main__":
+    app = tornado.web.Application([
+        (r"/", Home),
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {'path': 'assets'}),
+        (r"/%F0%9F%92%AC", ChatPage),
+        (r"/chat", ChatSend),
+        (r"/ws", Chat)
+    ])
 
-app = tornado.web.Application([
-    (r"/", Home),
-    (r"/assets/(.*)", StaticFileHandler, {'path': 'assets'}),
-    (r"/%F0%9F%92%AC", ChatPage),
-    (r"/ws", Chat)
-])
-
-app.listen(8888)
-tornado.ioloop.IOLoop.current().start()
+    app.listen(8888)
+    tornado.ioloop.IOLoop.current().start()
