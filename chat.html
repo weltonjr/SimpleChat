@@ -1,0 +1,39 @@
+<html>
+
+<head>
+    <title>WebChat</title>
+
+    <link rel="stylesheet" href="/assets/bootstrap.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="row justify-content-md-center">
+            <div class="col col-md-3">
+                <h1>WebChat</h1>
+                <hr>
+                <div>
+                     <ul>
+                         <li>Teste</li>
+                     </ul>
+                </div>
+                <form onsubmit="formCallback">
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" id="nome" name="Nome" placeholder="Nome" required>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function formCalback(e){
+            e.preventDefault()
+        }
+    </script>
+</body>
+
+</html>
