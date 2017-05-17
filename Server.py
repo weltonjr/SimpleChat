@@ -16,11 +16,6 @@ class ChatPage(tornado.web.RequestHandler):
         with open('chat.html', encoding="utf-8") as file:
             self.write(file.read())
 
-class ChatSend(tornado.web.RequestHandler):
-    def post(self):
-        for user in Users:
-            user.write_message("self.request.body")
-
 class Chat(tornado.websocket.WebSocketHandler):
     def open(self):
         print('open')
