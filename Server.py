@@ -29,7 +29,7 @@ class Chat(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         print(message)
         for item in Users:
-            item.write_message("message")
+            item.write_message(message)
 
     def on_close(self):
         print('closed')

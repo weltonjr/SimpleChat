@@ -9,24 +9,24 @@
 <body ng-app="Chat">
     <div class="content" ng-controller="chatController">
         <div class="row justify-content-md-center">
-            <div class="col col-md-3">
+            <div class="col col-xs-10 col-md-3">
                 <h1>WebChat</h1>
                 <hr>
                 <div class="list-group">
-                    <div class="list-group-item list-group-item-action flex-column align-items-start active" ng-repeat="message in messages">
+                    <div style="margin-bottom:5px" class="list-group-item list-group-item-action flex-column align-items-start active" ng-repeat="message in mensagens">
                         <div class="d-flex w-100 justify-content-between">
-                            <small>Nome de usuario</small>
+                            <small>{{message.nome}}</small>
                             <small>data</small>
                         </div>
-                        <p class="mb-1">{{message.text}}}</p>
+                        <p class="mb-1">{{message.text}}</p>
                     </div>
                 </div>
                 <hr>
                 <form ng-submit="click()">
                     <div class="input-group input-group-lg">
-                        <input type="text" class="form-control" id="nome" name="Nome" placeholder="Digite algo..." required ng-model="Message">
+                        <input type="text" class="form-control" id="nome" name="Nome" placeholder="Digite algo..." required ng-model="Message.text">
                         <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary" >Entrar</button>
+                            <button type="submit" class="btn btn-primary" >Enviar</button>
                         </span>
                     </div>
                 </form>
@@ -40,21 +40,25 @@
         myApp.controller('chatController', function ($scope, $http) {
 
             let connection = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws`)
+            $scope.mensagens = []
+            $scope.Message = {nome: 'welton'}
 
             connection.onopen = function (e){
                 
             }
             connection.onmessage = function (e) {
                 console.log(e.data)
+                $scope.mensagens.push(JSON.parse(e.data))
+                $scope.$apply()
             };
 
             connection.onclose = function(e){
-                $scope.status = false
                 connection = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws`)
             }
             
             $scope.click = function () {
-                connection.send($scope.Message)
+                connection.send(JSON.stringify($scope.Message))
+                $scope.Message.text = ''
             }
         });
     </script>
