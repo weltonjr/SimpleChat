@@ -9,13 +9,6 @@ class Home(tornado.web.RequestHandler):
         with open('index.html', encoding="utf-8") as file:
             self.write(file.read())
 
-class ChatPage(tornado.web.RequestHandler):
-    def get(self):
-        self.redirect("/")
-    def post(self):
-        with open('chat.html', encoding="utf-8") as file:
-            self.write(file.read())
-
 class Chat(tornado.websocket.WebSocketHandler):
     def open(self):
         print('open')
@@ -37,8 +30,6 @@ if __name__ == "__main__":
     app = tornado.web.Application([
         (r"/", Home),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {'path': 'assets'}),
-        (r"/%F0%9F%92%AC", ChatPage),
-        (r"/chat", ChatSend),
         (r"/ws", Chat)
     ])
 
